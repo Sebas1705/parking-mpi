@@ -28,4 +28,13 @@ public:
 
     /*Funcion que imprime las ocupaciones*/
     void printOcups();
+
+    /*Getter plazas*/
+    int getPlazas();
+
+    /*Getter plantas*/
+    int getPlantas();
+
+    /*Destructor de la clase admin*/
+    ~Admin();
 };

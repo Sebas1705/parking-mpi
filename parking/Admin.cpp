@@ -10,10 +10,11 @@ int* Admin::getPlazaLibre(tipo_t tipo){
     return NULL;
 }
 
-Admin::Admin(int plantas,int plazas){
-    this->plazas = plazas;
-    this->plantas = plantas;
-    this->ocup=(int**)malloc(sizeof(int)*plazas*plantas);
+Admin::Admin(int nPlantas,int nPlazas): 
+    plantas(nPlantas), 
+    plazas(nPlazas),
+    ocup((int**)malloc(sizeof(int*)*plantas)){
+    for(int i=0;i<nPlantas;i++)ocup[i]=(int*)malloc(sizeof(int)*plazas);
 }
 
 int Admin::pedirPlaza(tipo_t tipo){
@@ -29,4 +30,17 @@ void Admin::printOcups(){
         }
         std::cout<<"\n";
     }
+    std::cout<<"->Fin Ocupaciones\n";
+}
+
+int Admin::getPlantas(){
+    return this->plantas;
+}
+
+int Admin::getPlazas(){
+    return this->plazas;
+}
+
+Admin::~Admin(){
+    free(this->ocup);
 }

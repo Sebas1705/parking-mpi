@@ -4,7 +4,7 @@ using namespace std;
 
 int main()
 {
-    Admin admin(3,10);
+    Admin admin(10,20);
     admin.printOcups();
     return 0;
 }
