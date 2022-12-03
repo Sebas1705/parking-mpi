@@ -1,7 +1,6 @@
 #ifndef __Admin__h
 #define __Admin__h
 #endif
-#include <iostream>
 
 typedef enum Tipos{COCHE,CAMION} tipo_t;
 
@@ -10,30 +9,36 @@ class Admin
 
     int plantas;
     int plazas;
+    int libres;
     int **ocup;
-    
-    /*Funcion que imprime las plazas ocupadas y libres*/
-    void print();
 
     /*Funcion que busca en el parking y devuelve la plaza y la planta*/
-    int* getPlazaLibre(tipo_t tipo);
+    int* getPlazas(int rank,tipo_t tipo,bool libre);
 
+    /*Funcion que imprime las ocupaciones*/
+    void printOcups();
+    
 public:
 
     /*Constructor de la clase Admin*/
     Admin(int plazas, int plantas);
     
-    /*Funcion que pide plaza y devuelve la plaza ocupada*/
-    int pedirPlaza(tipo_t tipo);
+    /*Funcion que pide plaza y devuelve 0 o -1 si se pudo entrar*/
+    int entrarParking(int rank,tipo_t tipo);
 
-    /*Funcion que imprime las ocupaciones*/
-    void printOcups();
+    /*Funcion que hace salir al vehiculo y devuelve 0 o -1 si no se pudo salir*/
+    int salirParking(int rank,tipo_t tipo);
+
+    
 
     /*Getter plazas*/
     int getPlazas();
 
     /*Getter plantas*/
     int getPlantas();
+
+    /*Getter libres*/
+    int getLibres();
 
     /*Destructor de la clase admin*/
     ~Admin();

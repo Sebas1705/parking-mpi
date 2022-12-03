@@ -7,8 +7,9 @@ using namespace std;
 
 int main(int argc, char **argv){
     
+    //Argumentos del main: Plantas Plazas
     if(argc!=2){
-        fprintf(stderr,"Error en el numero de parametros [Plazas] [Plantas]: %d, %d",&argv[1],&argv[2]);
+        fprintf(stderr,"Error en el numero de parametros [Plantas] [Plazas]: %d, %d",&argv[1],&argv[2]);
         exit(1);
     } 
 
