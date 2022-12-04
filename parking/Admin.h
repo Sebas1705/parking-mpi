@@ -2,7 +2,7 @@
 #define __Admin__h
 #endif
 
-typedef enum Tipos{COCHE,CAMION} tipo_t;
+typedef enum Tipos{COCHE=0,CAMION=1} tipo_t;
 
 class Admin
 {
@@ -28,17 +28,6 @@ public:
 
     /*Funcion que hace salir al vehiculo y devuelve 0 o -1 si no se pudo salir*/
     int salirParking(int rank,tipo_t tipo);
-
-    
-
-    /*Getter plazas*/
-    int getPlazas();
-
-    /*Getter plantas*/
-    int getPlantas();
-
-    /*Getter libres*/
-    int getLibres();
 
     /*Destructor de la clase admin*/
     ~Admin();
