@@ -1,4 +1,4 @@
-all: admin coche camion run clean
+all: admin coche camion run 
 
 admin: Admin.cpp Admin.h
 	mpiCC Admin.cpp Admin.h -o admin
@@ -12,7 +12,3 @@ camion: Camion.cpp
 run: admin coche camion
 	mpirun --hostfile hostfile.config -np 1 admin 10 2 : -np 10 coche : -np 4 camion
 
-clean: admin coche camion
-	rm admin
-	rm coche
-	rm camion
