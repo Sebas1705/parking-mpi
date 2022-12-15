@@ -1,5 +1,5 @@
-#ifndef __Admin3__h
-#define __Admin3__h
+#ifndef __Admin__h
+#define __Admin__h
 
 typedef enum Tipos{COCHE=0,CAMION=1} tipo_t;
 
