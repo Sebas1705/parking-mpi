@@ -1,4 +1,5 @@
 
-# Parking v2
+# Parking v3
 
-Like parking v1 but there are a new type of vehicle, the truck that use two continuos places
+Like parking v2 but you can input a number of floors apart from
+places.
