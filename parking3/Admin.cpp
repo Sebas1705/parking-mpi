@@ -76,8 +76,8 @@ int Admin::salirParking(int rank,tipo_t tipo){
     if(a==NULL)return -1;
     if(tipo==COCHE)ocup[a[0]][a[1]]=0;
     else{
-        ocup[a[0]][a[1]]=rank;
-        ocup[a[0]][a[1]+1]=rank;
+        ocup[a[0]][a[1]]=0;
+        ocup[a[0]][a[1]+1]=0;
         libres++;
     }
     libres++;

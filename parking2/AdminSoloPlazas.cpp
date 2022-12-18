@@ -1,83 +1,62 @@
-#include "Admin.h"
+#include "AdminSoloPlazas.h"
 #include <mpi.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <time.h>
 
-int* Admin::getPlazas(int rank,tipo_t tipo,bool libre){
-    int *x=(int*)malloc(sizeof(int)*2);
-    for(int i=0;i<plantas;i++){
-        for(int j=0;j<((tipo==COCHE)?plazas:plazas-1);j++){
-            if(tipo==COCHE){
-                if(libre&&ocup[i][j]==0){
-                    x[0]=i;
-                    x[1]=j;
-                    return x;
-                }else if(!libre&&ocup[i][j]==rank){
-                    x[0]=i;
-                    x[1]=j;
-                    return x;
-                }
-            }else{
-                if(libre&&ocup[i][j]==0&&ocup[i][j+1]==0){
-                    x[0]=i;
-                    x[1]=j;
-                    return x;
-                }else if(!libre&&ocup[i][j]==rank){
-                    x[0]=i;
-                    x[1]=j;
-                    return x;
-                }
-            }
+int Admin::getPlaza(int rank,tipo_t tipo,bool libre){
+    int x;
+    for(int i=0;i<plazas;i++){
+        if(tipo==COCHE){
+            if(libre&&ocup[i]==0) return i;
+            else if(!libre&&ocup[i]==rank) return i;
+        }else{
+            if(libre&&ocup[i]==0&&ocup[i+1]==0) return i;
+            else if(!libre&&ocup[i]==rank) return i;
         }
     }
-    free(x);
-    return NULL;
+    return -1;
 }
 
 void Admin::printOcups(){
-    std::cout<<"Parking:\n";
-    for(int i=0;i<plantas;i++){
-        std::cout<<"Planta nº"<<i<<": ";
-        for(int j=0;j<plazas;j++){
-            std::cout<<"["<<ocup[i][j]<<"]";
-        }
-        std::cout<<"\n";
+    std::cout<<"Parking: ";
+    for(int i=0;i<plazas;i++){
+        std::cout<<"["<<ocup[i]<<"]";   
     }
+    std::cout<<"\n";
 }
 
-Admin::Admin(int nPlantas,int nPlazas): 
-    plantas(nPlantas), 
+Admin::Admin(int nPlazas):  
     plazas(nPlazas),
-    libres(nPlantas*nPlazas),
-    ocup((int**)malloc(sizeof(int*)*plantas)){
-    for(int i=0;i<nPlantas;i++)ocup[i]=(int*)malloc(sizeof(int)*plazas);
+    libres(nPlazas),
+    ocup((int*)malloc(sizeof(int)*plazas)){
+    for(int i=0;i<nPlazas;i++)ocup[i]=0;
 }
 
 int Admin::entrarParking(int rank,tipo_t tipo){
-    int* a=getPlazas(rank,tipo,true);
-    if(a==NULL)return -1;
-    if(tipo==COCHE)ocup[a[0]][a[1]]=rank;
+    int a=getPlaza(rank,tipo,true);
+    if(a==-1)return -1;
+    if(tipo==COCHE)ocup[a]=rank;
     else{
-        ocup[a[0]][a[1]]=rank;
-        ocup[a[0]][a[1]+1]=rank;
+        ocup[a]=rank;
+        ocup[a+1]=rank;
         libres--;
     }
     libres--;
-    std::cout<<"\nEntrada: "<<((tipo==COCHE)?"Coche":"Camion")<<" "<<rank<<" aparca en "<<a[0]<<","<<a[1];
+    std::cout<<"\nEntrada: "<<((tipo==COCHE)?"Coche":"Camion")<<" "<<rank<<" aparca en "<<a;
     std::cout<<". Plazas libres: "<<libres<<std::endl;
     printOcups();
     return 0;
 }
 
 int Admin::salirParking(int rank,tipo_t tipo){
-    int *a=getPlazas(rank,tipo,false);
-    if(a==NULL)return -1;
-    if(tipo==COCHE)ocup[a[0]][a[1]]=0;
+    int a=getPlaza(rank,tipo,false);
+    if(a==-1)return -1;
+    if(tipo==COCHE)ocup[a]=0;
     else{
-        ocup[a[0]][a[1]]=rank;
-        ocup[a[0]][a[1]+1]=rank;
+        ocup[a]=0;
+        ocup[a+1]=0;
         libres++;
     }
     libres++;
@@ -94,9 +73,8 @@ Admin::~Admin(){
 int main(int argc, char** argv){
     //Argumentos pasados:
     int plazas = atoi(argv[1]);
-    int plantas = atoi(argv[2]);
 
-    Admin admin(plantas,plazas);
+    Admin admin(plazas);
     MPI_Status estado;
 
     MPI_Init(&argc, &argv);

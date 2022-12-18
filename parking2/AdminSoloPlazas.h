@@ -1,18 +1,17 @@
-#ifndef __Admin__h
-#define __Admin__h
+#ifndef __AdminSoloPlazas__h
+#define __AdminSoloPlazas__h
 
 typedef enum Tipos{COCHE=0,CAMION=1} tipo_t;
 
 class Admin
 {
 
-    int plantas;
     int plazas;
     int libres;
-    int **ocup;
+    int *ocup;
 
     /*Funcion que busca en el parking y devuelve la plaza y la planta*/
-    int* getPlazas(int rank,tipo_t tipo,bool libre);
+    int getPlaza(int rank,tipo_t tipo,bool libre);
 
     /*Funcion que imprime las ocupaciones*/
     void printOcups();
@@ -20,7 +19,7 @@ class Admin
 public:
 
     /*Constructor de la clase Admin*/
-    Admin(int plazas, int plantas);
+    Admin(int plazas);
     
     /*Funcion que pide plaza y devuelve 0 o -1 si se pudo entrar*/
     int entrarParking(int rank,tipo_t tipo);
