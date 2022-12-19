@@ -1,5 +1,4 @@
 
-# Parking v3
+# Parking v1
 
-Like parking v2 but you can input a number of floors apart from
-places.
+Admin that control vehicles that go in and out of a parking. 

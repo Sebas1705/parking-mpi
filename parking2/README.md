@@ -1,5 +1,4 @@
 
-# Parking v3
+# Parking v2
 
-Like parking v2 but you can input a number of floors apart from
-places.
+Like parking v1 but you can use trucks.
