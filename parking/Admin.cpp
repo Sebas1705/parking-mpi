@@ -5,26 +5,26 @@
 #include <stdlib.h>
 #include <time.h>
 
-int* Admin::getPlazas(int rank,tipo_t tipo,bool libre){
+int* Admin::getSpots(int rank,VehicleType type,bool libre){
     int *x=(int*)malloc(sizeof(int)*2);
-    for(int i=0;i<plantas;i++){
-        for(int j=0;j<((tipo==COCHE)?plazas:plazas-1);j++){
-            if(tipo==COCHE){
-                if(libre&&ocup[i][j]==0){
+    for(int i=0;i<floors;i++){
+        for(int j=0;j<((type==CAR)?spots:spots-1);j++){
+            if(type==CAR){
+                if(libre&&occupied[i][j]==0){
                     x[0]=i;
                     x[1]=j;
                     return x;
-                }else if(!libre&&ocup[i][j]==rank){
+                }else if(!libre&&occupied[i][j]==rank){
                     x[0]=i;
                     x[1]=j;
                     return x;
                 }
             }else{
-                if(libre&&ocup[i][j]==0&&ocup[i][j+1]==0){
+                if(libre&&occupied[i][j]==0&&occupied[i][j+1]==0){
                     x[0]=i;
                     x[1]=j;
                     return x;
-                }else if(!libre&&ocup[i][j]==rank){
+                }else if(!libre&&occupied[i][j]==rank){
                     x[0]=i;
                     x[1]=j;
                     return x;
@@ -36,93 +36,93 @@ int* Admin::getPlazas(int rank,tipo_t tipo,bool libre){
     return NULL;
 }
 
-void Admin::printOcups(){
+void Admin::printOccupancy(){
     std::cout<<"Parking:\n";
-    for(int i=0;i<plantas;i++){
-        std::cout<<"Planta nº"<<i<<": ";
-        for(int j=0;j<plazas;j++){
-            std::cout<<"["<<ocup[i][j]<<"]";
+    for(int i=0;i<floors;i++){
+        std::cout<<"Floor "<<i<<": ";
+        for(int j=0;j<spots;j++){
+            std::cout<<"["<<occupied[i][j]<<"]";
         }
         std::cout<<"\n";
     }
 }
 
-Admin::Admin(int nPlantas,int nPlazas): 
-    plantas(nPlantas), 
-    plazas(nPlazas),
-    libres(nPlantas*nPlazas),
-    ocup((int**)malloc(sizeof(int*)*plantas)){
-    for(int i=0;i<nPlantas;i++)ocup[i]=(int*)malloc(sizeof(int)*plazas);
+Admin::Admin(int nFloors,int nSpots): 
+    floors(nFloors), 
+    spots(nSpots),
+    available(nFloors*nSpots),
+    occupied((int**)malloc(sizeof(int*)*floors)){
+    for(int i=0;i<nPlantas;i++)occupied[i]=(int*)malloc(sizeof(int)*spots);
 }
 
-int Admin::entrarParking(int rank,tipo_t tipo){
-    int* a=getPlazas(rank,tipo,true);
+int Admin::enterParking(int rank,VehicleType type){
+    int* a=getSpots(rank,type,true);
     if(a==NULL)return -1;
-    if(tipo==COCHE)ocup[a[0]][a[1]]=rank;
+    if(type==CAR)occupied[a[0]][a[1]]=rank;
     else{
-        ocup[a[0]][a[1]]=rank;
-        ocup[a[0]][a[1]+1]=rank;
-        libres--;
+        occupied[a[0]][a[1]]=rank;
+        occupied[a[0]][a[1]+1]=rank;
+        available--;
     }
-    libres--;
-    std::cout<<"\nEntrada: "<<((tipo==COCHE)?"Coche":"Camion")<<" "<<rank<<" aparca en "<<a[0]<<","<<a[1];
-    std::cout<<". Plazas libres: "<<libres<<std::endl;
-    printOcups();
+    available--;
+    std::cout<<"\nEntrada: "<<((type==CAR)?"Coche":"Camion")<<" "<<rank<<" parked at spot "<<a[0]<<","<<a[1];
+    std::cout<<". Plazas available: "<<available<<std::endl;
+    printOccupancy();
     return 0;
 }
 
-int Admin::salirParking(int rank,tipo_t tipo){
-    int *a=getPlazas(rank,tipo,false);
+int Admin::exitParking(int rank,VehicleType type){
+    int *a=getSpots(rank,type,false);
     if(a==NULL)return -1;
-    if(tipo==COCHE)ocup[a[0]][a[1]]=0;
+    if(type==CAR)occupied[a[0]][a[1]]=0;
     else{
-        ocup[a[0]][a[1]]=rank;
-        ocup[a[0]][a[1]+1]=rank;
-        libres++;
+        occupied[a[0]][a[1]]=rank;
+        occupied[a[0]][a[1]+1]=rank;
+        available++;
     }
-    libres++;
-    std::cout<<"\nSalida: "<<((tipo==COCHE)?"Coche":"Camion")<<" "<<rank<<" saliendo";
-    std::cout<<". Plazas libres: "<<libres<<std::endl;
-    printOcups();
+    available++;
+    std::cout<<"\nSalida: "<<((type==CAR)?"Coche":"Camion")<<" "<<rank<<" leaving";
+    std::cout<<". Plazas available: "<<available<<std::endl;
+    printOccupancy();
     return 0;
 }
 
 Admin::~Admin(){
-    free(this->ocup);
+    free(this->occupied);
 }
 
 int main(int argc, char** argv){
-    //Argumentos pasados:
-    int plazas = atoi(argv[1]);
-    int plantas = atoi(argv[2]);
+    //Command-line arguments:
+    int spots = atoi(argv[1]);
+    int floors = atoi(argv[2]);
 
-    Admin admin(plantas,plazas);
-    MPI_Status estado;
+    Admin admin(floors,spots);
+    MPI_Status status;
 
     MPI_Init(&argc, &argv);
-    //Modo: 0-entrar | 1-salir
-    int inMessage[3]; // {rank,modo,tipo_t}
+    //Mode: 0-enter | 1-exit
+    int inMessage[3]; // {rank,modo,VehicleType}
 
     MPI_Barrier(MPI_COMM_WORLD);
 
     while(1){
-        MPI_Recv(inMessage,3,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&estado);
+        MPI_Recv(inMessage,3,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&status);
         
-        //Entrada al parking:
+        //Parking entry:
         if(inMessage[1]==0){
-            int asignado=admin.entrarParking(inMessage[0],(inMessage[2]==0)?COCHE:CAMION);
-            if(asignado==-1){
-                if(inMessage[2]==0)printf("Coche %d no ha podido aparcar.\n", inMessage[0]);
-                else if(inMessage[2]==1)printf("Camion %d no ha podido aparcar.\n", inMessage[0]);
+            int assigned=admin.enterParking(inMessage[0],(inMessage[2]==0)?CAR:TRUCK);
+            if(assigned==-1){
+                if(inMessage[2]==0)printf("Car %d could not park.\n", inMessage[0]);
+                else if(inMessage[2]==1)printf("Truck %d could not park.\n", inMessage[0]);
             }
-            MPI_Send(&asignado,1,MPI_INT,inMessage[0],0,MPI_COMM_WORLD);
+            MPI_Send(&assigned,1,MPI_INT,inMessage[0],0,MPI_COMM_WORLD);
         }
-        //Salida del parking:
+        //Parking exit:
         else if(inMessage[1]==1){
-            int salida=admin.salirParking(inMessage[0],(inMessage[2]==0)?COCHE:CAMION);
+            int salida=admin.exitParking(inMessage[0],(inMessage[2]==0)?CAR:TRUCK);
             if(salida==-1){
-                if(inMessage[2]==0)printf("Coche %d no pudo dejar el parking.\n", inMessage[0]);
-                else if(inMessage[2]==1)printf("Camion %d no pudo dejar el parking.\n", inMessage[0]);
+                if(inMessage[2]==0)printf("Car %d could not exit the parking.\n", inMessage[0]);
+                else if(inMessage[2]==1)printf("Truck %d could not exit the parking.\n", inMessage[0]);
             }
         }
         sleep(1);
