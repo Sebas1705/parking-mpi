@@ -1,15 +1,13 @@
-all: admin coche camion run
+all: admin car truck run
 
-admin: AdminSoloPlazas.cpp AdminSoloPlazas.h
-	mpiCC AdminSoloPlazas.cpp AdminSoloPlazas.h -o admin
+admin: Admin.cpp Admin.h
+	mpiCC Admin.cpp Admin.h -o admin
 
-coche: Coche.cpp
-	mpiCC Coche.cpp -o coche
+car: Car.cpp
+	mpiCC Car.cpp -o car
 
-camion: Camion.cpp
-	mpiCC Camion.cpp -o camion
+truck: Truck.cpp
+	mpiCC Truck.cpp -o truck
 
-run: admin coche camion
-	mpirun --hostfile hostfile.config -np 1 admin 10 : -np 4 coche : -np 4 camion
-
-
+run: admin car truck
+	mpirun --hostfile hostfile.config -np 1 admin 10 : -np 4 car : -np 4 truck
