@@ -1,34 +1,34 @@
 #ifndef __Admin__h
 #define __Admin__h
 
-typedef enum Tipos{COCHE=0,CAMION=1} tipo_t;
+typedef enum VehicleTypes{CAR=0,TRUCK=1} VehicleType;
 
 class Admin
 {
 
-    int plantas;
-    int plazas;
-    int libres;
-    int **ocup;
+    int floors;
+    int spots;
+    int available;
+    int **occupied;
 
-    /*Funcion que busca en el parking y devuelve la plaza y la planta*/
-    int* getPlazas(int rank,tipo_t tipo,bool libre);
+    /*Finds a spot (floor and column) and returns it*/
+    int* getSpots(int rank,VehicleType type,bool libre);
 
-    /*Funcion que imprime las ocupaciones*/
-    void printOcups();
+    /*Funcion que imprime las occupiedaciones*/
+    void printOccupancy();
     
 public:
 
-    /*Constructor de la clase Admin*/
-    Admin(int plazas, int plantas);
+    /*Admin class constructor*/
+    Admin(int spots, int floors);
     
-    /*Funcion que pide plaza y devuelve 0 o -1 si se pudo entrar*/
-    int entrarParking(int rank,tipo_t tipo);
+    /*Requests a spot; returns 0 on success, -1 if no spot available*/
+    int enterParking(int rank,VehicleType type);
 
-    /*Funcion que hace salir al vehiculo y devuelve 0 o -1 si no se pudo salir*/
-    int salirParking(int rank,tipo_t tipo);
+    /*Removes vehicle from parking; returns 0 on success, -1 on error*/
+    int exitParking(int rank,VehicleType type);
 
-    /*Destructor de la clase admin*/
+    /*Admin class destructor*/
     ~Admin();
 };
 
