@@ -1,0 +1,12 @@
+# Compiled executables
+admin
+car
+truck
+coche
+camion
+*.out
+*.o
+*.exe
+
+# Build artifacts
+build/
