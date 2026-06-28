@@ -1,7 +1,7 @@
-all: camion coche
+all: truck car
 
-camion: Camion.cpp
-	mpiCC Camion.cpp -o coche
+truck: Truck.cpp
+	mpiCC Truck.cpp -o truck
 
-coche: Coche.cpp
-	mpiCC Coche.cpp -o coche
+car: Car.cpp
+	mpiCC Car.cpp -o car
