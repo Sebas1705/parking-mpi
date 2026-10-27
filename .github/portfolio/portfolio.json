@@ -1,0 +1,11 @@
+{
+  "accent": "#B45309",
+  "icon_alt": {
+    "en": "Parking MPI icon: the letters PM in white on an amber rounded square",
+    "es": "Icono de Parking MPI: las letras PM en blanco sobre un cuadrado redondeado ámbar"
+  },
+  "banner_alt": {
+    "en": "Parking MPI banner: the monogram icon, the tagline \"MPI parking-lot simulator in C++\" and the stack (C++, MPI, HPC, Concurrency)",
+    "es": "Banner de Parking MPI: el icono con monograma, el lema \"Simulador de parking con MPI en C++\" y el stack (C++, MPI, HPC, Concurrency)"
+  }
+}
